@@ -6,8 +6,7 @@ import { getCurrentUser } from "./../../../lib/auth";
 const patientSchema = z.object({
   name: z.string().min(2).max(100),
   age: z.number().min(1).max(150),
-  gender: z.enum(["L", "P"]),
-  record: z.string().min(2).max(16),
+  gender: z.enum(["L", "P"])
 });
 
 export async function GET() {
@@ -52,12 +51,12 @@ export async function POST(request) {
         }
       );
     }
-    
+
     const body = await request.json();
 
-    const { name, age, gender, record } = body;
+    const { name, age, gender} = body;
 
-    const parsedData = patientSchema.safeParse({ name, age, gender, record});
+    const parsedData = patientSchema.safeParse({ name, age, gender});
 
     if (!parsedData.success) {
       return NextResponse.json(
@@ -71,7 +70,21 @@ export async function POST(request) {
       );
     }
 
-    if (!name || !age || !gender || !record) {
+    const lastPatient = await prisma.patients.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    const nextNumber = lastPatient
+      ? lastPatient.id + 1
+      : 1;
+
+    const recordNumber = `RM-RSKG-${new Date().getFullYear()}-${String(
+      nextNumber
+    ).padStart(6, "0")}`;
+
+    if (!name || !age || !gender) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -87,7 +100,7 @@ export async function POST(request) {
         name,
         age,
         gender,
-        recordNumber:record,
+        recordNumber: recordNumber,
       },
     });
 
@@ -107,7 +120,6 @@ export async function POST(request) {
       }
     );
   } catch (error) {
-    console.error(error);
     return NextResponse.json(
       {
         message: "Terjadi kesalahan server",

@@ -7,7 +7,6 @@ const newPatientSchema = z.object({
     name: z.string().min(2).max(100),
     age: z.number().min(1).max(150),
     gender: z.enum(["L", "P"]),
-    record: z.string().min(2).max(16),
     doctorId: z.number().int().positive(),
 });
     
@@ -29,14 +28,13 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    const { name, age, gender, record, doctorId} = body;
+    const { name, age, gender, doctorId} = body;
 
     const parsedData = newPatientSchema.safeParse({
       name,
       age,
       gender,
-      record,
-      doctorId,
+      doctorId
     });
 
     if (!parsedData.success) {
@@ -51,7 +49,7 @@ export async function POST(request) {
       );
     }
 
-    if (!name || !age || !gender || !record || !doctorId) {
+    if (!name || !age || !gender || !doctorId) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -62,6 +60,20 @@ export async function POST(request) {
       );
     }
 
+    const lastPatient = await prisma.patients.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    const nextNumber = lastPatient
+      ? lastPatient.id + 1
+      : 1;
+
+    const recordNumber = `RM-RSKG-${new Date().getFullYear()}-${String(
+      nextNumber
+    ).padStart(6, "0")}`;
+
     const receptionistId = currentUser.userId;
 
     const newPatient = await prisma.patients.create({
@@ -69,7 +81,7 @@ export async function POST(request) {
         name,
         age,
         gender,
-        recordNumber:record,
+        recordNumber: recordNumber,
         visits: {
           create: {
             doctor: {
@@ -105,9 +117,6 @@ export async function POST(request) {
       }
     );
   } catch (error) {
-    console.error(error);
-    console.log("CURRENT USER:", currentUser);
-    console.log("RECEPTIONIST ID:", currentUser?.id);
     return NextResponse.json(
       {
         message: "Terjadi kesalahan server",
