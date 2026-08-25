@@ -40,6 +40,19 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    const currentUser = await getCurrentUser();
+
+    if (currentUser.role !== "PENDAFTARAN" && currentUser.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+    
     const body = await request.json();
 
     const { name, age, gender, record } = body;
