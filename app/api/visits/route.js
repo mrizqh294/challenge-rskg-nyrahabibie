@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
 import * as z from "zod"; 
-import { prisma } from "./../../../../lib/prisma"
-import { getCurrentUser } from "./../../../../lib/auth";
+import { prisma} from "./../../../lib/prisma";
+import { getCurrentUser } from "./../../../lib/auth";
 
 const visitSchema = z.object({
     patientId: z.number().int().positive(),
-    doctorId: z.number().int().positive(),
-    visitDate: z.string().datetime(),
-    status: z.enum(["WAITING", "IN_PROGRESS", "COMPLETED"]),
+    doctorId: z.number().int().positive()
 });
 
 export async function GET() {
@@ -44,9 +42,9 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    const { patientId, doctorId, visitDate, status } = body;
+    const { patientId, doctorId } = body;
 
-    const parsedData = visitSchema.safeParse({ patientId, doctorId, visitDate, status });
+    const parsedData = visitSchema.safeParse({ patientId, doctorId});
 
     if (!parsedData.success) {
       return NextResponse.json(
@@ -60,7 +58,7 @@ export async function POST(request) {
       );
     }
 
-    if (!patientId || !doctorId || !visitDate || !status) {
+    if (!patientId || !doctorId) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -71,14 +69,15 @@ export async function POST(request) {
       );
     }
 
+    const receptionistId = currentUser.userId;
 
     const visit = await prisma.visits.create({
       data: {
         patientId,
         doctorId,
-        recepsionistId: currentUser.id,
-        visitDate,
-        status,
+        recepsionistId : Number(receptionistId),
+        visitDate: new Date(),
+        status : "WAITING",
       },
     });
 

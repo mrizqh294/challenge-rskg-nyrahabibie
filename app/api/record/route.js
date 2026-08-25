@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import * as z from "zod"; 
-import { prisma } from "./../../../../lib/prisma";
-import { getCurrentUser } from "./../../../../lib/auth";
+import { prisma} from "./../../../lib/prisma";
+import { getCurrentUser } from "./../../../lib/auth";
 
 const medicalRecordSchema = z.object({
     visitId: z.number().int().positive(),
@@ -54,10 +54,10 @@ export async function POST(request) {
       );
     }
 
-
-    const medicalRecord = await prisma.medicalRecords.create({
+    const doctorId = currentUser.userId;
+    const medicalRecord = await prisma.medicalRecord.create({
       data: {
-        doctorId: currentUser.id,
+        doctorId,
         visitId,
         diagnosis,
         actionPlan,
@@ -82,6 +82,7 @@ export async function POST(request) {
       }
     );
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       {
         message: "Terjadi kesalahan server",

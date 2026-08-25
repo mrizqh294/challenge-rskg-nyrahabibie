@@ -18,8 +18,17 @@ export async function GET() {
     }
 
     const visits = await prisma.visits.findMany({
+      select: {
+        visitDate: true,
+        status: true,
+        patient: {
+            select: {
+                name: true
+            }
+        }
+      },
       where: {
-        doctorId: currentUser.id
+        doctorId: currentUser.userId
       }
     });
     return NextResponse.json({ visits });

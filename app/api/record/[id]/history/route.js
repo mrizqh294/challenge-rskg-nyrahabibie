@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "./../../../../lib/prisma";
-import { getCurrentUser } from "./../../../../lib/auth";
+import { prisma } from "./../../../../../lib/prisma";
+import { getCurrentUser } from "./../../../../../lib/auth";
 
 export async function GET(request, { params }) {
 
@@ -21,7 +21,9 @@ export async function GET(request, { params }) {
 
    const medicalRecords = await prisma.medicalRecord.findMany({
     where: {
-      patientId: Number(id),
+      visit: {
+        patientId: Number(id),
+      }
     },
   });
 
