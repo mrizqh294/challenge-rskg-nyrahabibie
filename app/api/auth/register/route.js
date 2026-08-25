@@ -1,12 +1,34 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import * as z from "zod"; 
 import { prisma } from "./../../../../lib/prisma";
+
+const userSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  password: z.string().min(6),
+  role: z.enum(["ADMIN", "DOKTER", "PERAWAT"]),
+});
 
 export async function POST(request) {
   try {
     const body = await request.json();
 
     const { name, email, password, role } = body;
+
+    const parsedData = userSchema.safeParse({ name, email, password, role });
+
+    if (!parsedData.success) {
+      return NextResponse.json(
+        {
+          message: "Data tidak valid",
+          errors: parsedData.error.flatten().fieldErrors,
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
     if (!name || !email || !password || !role) {
       return NextResponse.json(

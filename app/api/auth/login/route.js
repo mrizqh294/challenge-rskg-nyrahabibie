@@ -1,13 +1,33 @@
 import { NextResponse } from "next/server";
+import * as z from "zod"; 
 import bcrypt from "bcryptjs";
 import { prisma } from "./../../../../lib/prisma.js";
 import { createToken } from "./../../../../lib/jwt.js";
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
 export async function POST(request) {
   try {
     const body = await request.json();
 
     const { email, password } = body;
+
+    const parsedData = loginSchema.safeParse({ email, password });
+
+    if (!parsedData.success) {
+      return NextResponse.json(
+        {
+          message: "Data tidak valid",
+          errors: parsedData.error.flatten().fieldErrors,
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
     if (!email || !password) {
       return NextResponse.json(
