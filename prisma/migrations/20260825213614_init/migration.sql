@@ -33,6 +33,7 @@ CREATE TABLE `Visits` (
     `doctorId` INTEGER NOT NULL,
     `recepsionistId` INTEGER NOT NULL,
     `visitDate` DATETIME(3) NOT NULL,
+    `description` TEXT NOT NULL,
     `status` ENUM('WAITING', 'CHECKED', 'COMPLETED', 'CANCELED') NOT NULL DEFAULT 'WAITING',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,

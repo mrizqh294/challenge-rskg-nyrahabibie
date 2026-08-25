@@ -5,7 +5,8 @@ import { getCurrentUser } from "./../../../lib/auth";
 
 const visitSchema = z.object({
     patientId: z.number().int().positive(),
-    doctorId: z.number().int().positive()
+    doctorId: z.number().int().positive(),
+    description: z.string().min(2).max(1000)
 });
 
 export async function GET() {
@@ -42,9 +43,9 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    const { patientId, doctorId } = body;
+    const { patientId, doctorId, description } = body;
 
-    const parsedData = visitSchema.safeParse({ patientId, doctorId});
+    const parsedData = visitSchema.safeParse({ patientId, doctorId, description });
 
     if (!parsedData.success) {
       return NextResponse.json(
@@ -58,7 +59,7 @@ export async function POST(request) {
       );
     }
 
-    if (!patientId || !doctorId) {
+    if (!patientId || !doctorId || !description) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -77,6 +78,7 @@ export async function POST(request) {
         doctorId,
         recepsionistId : Number(receptionistId),
         visitDate: new Date(),
+        description,
         status : "WAITING",
       },
     });

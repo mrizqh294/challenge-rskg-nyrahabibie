@@ -63,6 +63,7 @@ model Visits {
   doctorId      Int
   recepsionistId   Int
   visitDate     DateTime
+  description   String   @db.Text
   status        Status   @default(WAITING)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

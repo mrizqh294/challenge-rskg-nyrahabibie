@@ -8,6 +8,7 @@ const newPatientSchema = z.object({
     age: z.number().min(1).max(150),
     gender: z.enum(["L", "P"]),
     doctorId: z.number().int().positive(),
+    description: z.string().min(2).max(1000)
 });
     
 
@@ -28,13 +29,14 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    const { name, age, gender, doctorId} = body;
+    const { name, age, gender, doctorId, description } = body;
 
     const parsedData = newPatientSchema.safeParse({
       name,
       age,
       gender,
-      doctorId
+      doctorId,
+      description
     });
 
     if (!parsedData.success) {
@@ -49,7 +51,7 @@ export async function POST(request) {
       );
     }
 
-    if (!name || !age || !gender || !doctorId) {
+    if (!name || !age || !gender || !doctorId || !description) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -95,6 +97,7 @@ export async function POST(request) {
                 }
             },
             visitDate : new Date(),
+            description,
             status : "WAITING"
           },
         },
