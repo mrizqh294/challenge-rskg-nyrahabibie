@@ -1,38 +1,35 @@
 import { NextResponse } from "next/server";
 import * as z from "zod"; 
 import { prisma } from "./../../../../lib/prisma";
+import { getCurrentUser } from "./../../../../lib/auth";
 
 const medicalRecordSchema = z.object({
-    doctorId: z.number().int().positive(),
     visitId: z.number().int().positive(),
     diagnosis: z.string().min(2).max(1000),
     actionPlan: z.string().min(2).max(1000),
     receipt : z.string().min(2).max(1000),
 });
 
-export async function GET() {
-  try {
-    const medicalRecords = await prisma.medicalRecords.findMany();
-    return NextResponse.json({ medicalRecords });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Terjadi kesalahan server",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
-}
-
 export async function POST(request) {
   try {
+    const currentUser = await getCurrentUser();
+
+    if (currentUser.role !== "DOKTER") {
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const body = await request.json();
 
-    const { doctorId, visitId, diagnosis, actionPlan, receipt } = body;
+    const {visitId, diagnosis, actionPlan, receipt } = body;
 
-    const parsedData = medicalRecordSchema.safeParse({ doctorId, visitId, diagnosis, actionPlan, receipt });
+    const parsedData = medicalRecordSchema.safeParse({ visitId, diagnosis, actionPlan, receipt });
 
     if (!parsedData.success) {
       return NextResponse.json(
@@ -46,7 +43,7 @@ export async function POST(request) {
       );
     }
 
-    if (!doctorId || !visitId || !diagnosis || !actionPlan || !receipt) {
+    if (!visitId || !diagnosis || !actionPlan || !receipt) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -60,7 +57,7 @@ export async function POST(request) {
 
     const medicalRecord = await prisma.medicalRecords.create({
       data: {
-        doctorId,
+        doctorId: currentUser.id,
         visitId,
         diagnosis,
         actionPlan,

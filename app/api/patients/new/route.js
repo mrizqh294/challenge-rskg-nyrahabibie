@@ -19,18 +19,7 @@ export async function POST(request) {
   try {
     const currentUser = await getCurrentUser();
 
-    if (!currentUser) {
-      return NextResponse.json(
-        {
-          message: "Anda harus login untuk melakukan tindakan ini",
-        },
-        {
-          status: 401,
-        }
-      );
-    }
-
-    if (currentUser.role !== "ADMIN" && currentUser.role !== "PENDAFTARAN") {
+    if (currentUser.role !== "PENDAFTARAN") {
       return NextResponse.json(
         {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",

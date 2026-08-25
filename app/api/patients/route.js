@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import * as z from "zod"; 
-import { prisma } from "./../../../lib/prisma";
+import { prisma} from "./../../../lib/prisma";
+import { getCurrentUser } from "./../../../lib/auth";
 
 const patientSchema = z.object({
   name: z.string().min(2).max(100),
@@ -11,6 +12,18 @@ const patientSchema = z.object({
 
 export async function GET() {
   try {
+    const currentUser = await getCurrentUser();
+    if (currentUser.role !== "PENDAFTARAN" && currentUser.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const patients = await prisma.patients.findMany();
     return NextResponse.json({ patients });
   } catch (error) {

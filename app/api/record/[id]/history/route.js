@@ -6,7 +6,7 @@ export async function GET(request, { params }) {
 
    const currentUser = await getCurrentUser();
 
-   if (currentUser.role !== "DOKTER" && currentUser.role !== "ADMIN") {
+   if (currentUser.role !== "DOKTER") {
       return NextResponse.json(
         {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
@@ -16,12 +16,12 @@ export async function GET(request, { params }) {
         }
       );
     }
-
+   
    const { id } = await params;
 
    const medicalRecords = await prisma.medicalRecord.findMany({
     where: {
-      userId: Number(id),
+      patientId: Number(id),
     },
   });
 
