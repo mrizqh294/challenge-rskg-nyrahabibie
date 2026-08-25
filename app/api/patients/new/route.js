@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
-import * as z from "zod"; 
-import { prisma } from "./../../../lib/prisma";
-import { getCurrentUser } from "./../../../lib/auth";
+import * as z from "zod";
+import { prisma } from "./../../../../lib/prisma";
+import { getCurrentUser } from "./../../../../lib/auth";
 
 const newPatientSchema = z.object({
     name: z.string().min(2).max(100),
     age: z.number().min(1).max(150),
     gender: z.enum(["L", "P"]),
     record: z.string().min(2).max(16),
-    patientId: z.number().int().positive(),
     doctorId: z.number().int().positive(),
-    visitDate: z.string().datetime(),
-    status: z.enum(["WAITING", "IN_PROGRESS", "COMPLETED"]),
 });
     
 
@@ -32,17 +29,14 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    const { name, age, gender, record, patientId, doctorId, visitDate, status } = body;
+    const { name, age, gender, record, doctorId} = body;
 
     const parsedData = newPatientSchema.safeParse({
       name,
       age,
       gender,
       record,
-      patientId,
       doctorId,
-      visitDate,
-      status
     });
 
     if (!parsedData.success) {
@@ -57,7 +51,7 @@ export async function POST(request) {
       );
     }
 
-    if (!name || !age || !gender || !record || !patientId || !doctorId || !visitDate || !status) {
+    if (!name || !age || !gender || !record || !doctorId) {
       return NextResponse.json(
         {
           message: "Semua field wajib diisi",
@@ -68,6 +62,8 @@ export async function POST(request) {
       );
     }
 
+    const receptionistId = currentUser.userId;
+
     const newPatient = await prisma.patients.create({
       data: {
         name,
@@ -76,11 +72,18 @@ export async function POST(request) {
         recordNumber:record,
         visits: {
           create: {
-            patientId,
-            doctorId,
-            recepsionistId : currentUser.id,
-            visitDate,
-            status
+            doctor: {
+              connect: {
+                  id: Number(doctorId)
+              }
+            },
+            recepsionist: {
+                connect: {
+                    id: Number(receptionistId)
+                }
+            },
+            visitDate : new Date(),
+            status : "WAITING"
           },
         },
       },
@@ -103,6 +106,8 @@ export async function POST(request) {
     );
   } catch (error) {
     console.error(error);
+    console.log("CURRENT USER:", currentUser);
+    console.log("RECEPTIONIST ID:", currentUser?.id);
     return NextResponse.json(
       {
         message: "Terjadi kesalahan server",
