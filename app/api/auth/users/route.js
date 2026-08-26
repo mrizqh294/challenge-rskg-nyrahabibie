@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "./../../../../lib/prisma";
 import { getCurrentUser } from "./../../../../lib/auth";
 
-export async function GET() {
+export async function GET(request) {
   try {
     const currentUser = await getCurrentUser();
 
@@ -26,6 +26,22 @@ export async function GET() {
           status: 403,
         }
       );
+    }
+
+    const searchParams = request.nextUrl.searchParams;
+    const roleParams = searchParams.get('role');
+
+    if (roleParams){
+      const users = await prisma.user.findMany({
+          select:{
+            id : true,
+            name : true,
+          },
+          where: {
+            role : roleParams
+          }
+        });
+      return NextResponse.json({ users });
     }
 
     const users = await prisma.user.findMany();

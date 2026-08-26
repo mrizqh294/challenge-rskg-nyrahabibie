@@ -12,5 +12,6 @@ export const me = async() => {
   });
 
   const data = await response.json();
+  
   return data.user;
 }

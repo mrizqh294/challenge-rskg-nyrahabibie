@@ -56,3 +56,13 @@ export const deleteUser = async (id) => {
 
   return await response.json();
 };
+
+export const doctorList = async() => {
+    const response = await fetch(`/api/auth/users?role=DOKTER`, {
+    method: "GET", 
+  });
+
+  const data = await response.json();
+  
+  return data.users;
+}

@@ -9,7 +9,8 @@ import Badge from "../../components/Badge";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Modal from "../../components/Modal";
-import { getUsers, addUser, updateUser, deleteUser } from "./../../services/user.services";
+import Textarea from "../../components/Textarea";
+import { getUsers, addUser, updateUser, deleteUser, doctorList } from "./../../services/user.services";
 import { addVisit, deleteVisit, getVisits, updateVisit } from "./../../services/visit.services";
 import { addPatient, deletePatient, getPatients, updatePatient } from "./../../services/patient.services";
 import { Table, Th, Td, EmptyRow } from "../../components/Table";
@@ -40,21 +41,24 @@ export default function DashboardPage() {
   const [users, setUsers] = useState([]);
   const [patients, setPatients] = useState([]);
   const [visits, setVisits] = useState([]);
+  const [doctors, setDoctors] = useState([]);
 
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadUsers() {
       try {
-        const [users, patients, visits] = await Promise.all([
+        const [users, patients, visits, doctors] = await Promise.all([
           getUsers(),
           getPatients(),
           getVisits(),
+          doctorList(),
         ]);
 
         setUsers(users);
         setPatients(patients);
         setVisits(visits);
+        setDoctors(doctors);
       } catch (error) {
         console.error(error);
       } finally {
@@ -92,14 +96,28 @@ export default function DashboardPage() {
 
     setFormData((prev) => {
       let finalValue = value;
+      let extraData = {};
 
       if (name === "age") {
+        finalValue = value === "" ? "" : Number(value);
+      }
+
+      if (name === "doctorId") {
+        const selectedDoctor = doctors.find((doc) => String(doc.id) === String(value));
+        extraData.doctorName = selectedDoctor ? selectedDoctor.name : "";
+        finalValue = value === "" ? "" : Number(value);
+      }
+
+      if (name === "patientId") {
+        const selectedPatient = patients.find((pat) => String(pat.id) === String(value));
+        extraData.patientName = selectedPatient ? selectedPatient.name : "";
         finalValue = value === "" ? "" : Number(value);
       }
 
       return {
         ...prev,
         [name]: finalValue,
+        ...extraData,
       };
     });
   };
@@ -245,8 +263,8 @@ export default function DashboardPage() {
         <tr>
           <Th>No</Th>
           <Th>Pasien</Th>
-          <Th>Tanggal</Th>
           <Th>Dokter</Th>
+          <Th>Deskripsi</Th>
           <Th>Status</Th>
           <Th>Aksi</Th>
         </tr>
@@ -258,9 +276,9 @@ export default function DashboardPage() {
           visits.map((visit, index) => (
             <tr key={visit.id} className="border-b hover:bg-gray-50">
               <Td>{index + 1}</Td>
-              <Td>{visit.patient}</Td>
-              <Td>{visit.date}</Td>
-              <Td>{visit.doctor}</Td>
+              <Td>{visit.patient.name}</Td>
+              <Td>{visit.doctor.name}</Td>
+              <Td>{visit.description}</Td>
               <Td>
                 <Badge type={visit.status === "Selesai" ? "green" : visit.status === "Batal" ? "red" : "yellow"}>
                   {visit.status}
@@ -335,14 +353,28 @@ export default function DashboardPage() {
     if (activeMenu === "visits") {
       return (
         <>
-          <Input label="Nama Pasien" name="patient" value={formData.patient || ""} onChange={handleChange} placeholder="Nama pasien" />
-          <Input label="Dokter" name="doctor" value={formData.doctor || ""} onChange={handleChange} placeholder="Nama dokter" />
-          <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
-            <option value="">Pilih status</option>
-            <option value="Menunggu">Menunggu</option>
-            <option value="Selesai">Selesai</option>
-            <option value="Batal">Batal</option>
+          <Select label="No. Rekam Medis" name="patientId" value={formData.patientId || ""} onChange={handleChange}>
+            <option value="">Pilih No.Rekam Medis</option>
+            {patients.map((patient) => (
+              <option key={patient.id} value={patient.id}>
+                {patient.recordNumber}
+              </option>
+            ))}
           </Select>
+          <Select label="Dokter" name="doctorId" value={formData.doctorId || ""} onChange={handleChange}>
+            <option value="">Pilih Dokter</option>
+            {doctors.map((doctor) => (
+              <option key={doctor.id} value={doctor.id}>
+                {doctor.name}
+              </option>
+            ))}
+          </Select>
+          <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
+            <option value="WAITING">Menunggu</option>
+            <option value="COMPLETED">Selesai</option>
+            <option value="CANCEL">Batal</option>
+          </Select>
+          <Textarea label="Deskrisi" name="description" value={formData.description || ""} onChange={handleChange}/>
         </>
       );
     }

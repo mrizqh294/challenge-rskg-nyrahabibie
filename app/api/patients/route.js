@@ -12,6 +12,18 @@ const patientSchema = z.object({
 export async function GET() {
   try {
     const currentUser = await getCurrentUser();
+
+    if (!currentUser){
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+    
     if (currentUser.role !== "PENDAFTARAN" && currentUser.role !== "ADMIN") {
       return NextResponse.json(
         {

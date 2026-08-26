@@ -38,7 +38,9 @@ export const getPatientById = async (id) => {
         throw new Error(errorData.message || "Gagal mengambil detail pasien");
     }
 
-    return await response.json();
+    const data= await response.json();
+
+    return data.patient;
 };
 
 

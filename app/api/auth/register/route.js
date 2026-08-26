@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import * as z from "zod"; 
 import { prisma } from "./../../../../lib/prisma";
+import { getCurrentUser } from "./../../../../lib/auth";
 
 const userSchema = z.object({
   name: z.string().min(2).max(100),
@@ -12,6 +13,30 @@ const userSchema = z.object({
 
 export async function POST(request) {
   try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser){
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    if (currentUser.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const body = await request.json();
 
     const { name, email, password, role } = body;

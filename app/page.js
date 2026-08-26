@@ -21,9 +21,6 @@ const LoginSIMRS = () => {
 
       const role = data.user.role;
 
-      console.log(role);
-      console.log(data);
-
       if (role === "ADMIN") {
         router.push("/dashboard/admin");
       } else if (role === "DOKTER") {

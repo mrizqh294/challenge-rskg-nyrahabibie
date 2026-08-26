@@ -11,7 +11,21 @@ const visitSchema = z.object({
 
 export async function GET() {
   try {
-    const visits = await prisma.visits.findMany();
+    const visits = await prisma.visits.findMany({
+    // Menggunakan 'include' untuk menarik data relasi
+      include: {
+        patient: {
+          select: {
+            name: true, // Hanya mengambil kolom 'name' dari tabel Patient
+          },
+        },
+        doctor: {
+          select: {
+            name: true, // Hanya mengambil kolom 'name' dari tabel Doctor
+          },
+        },
+      },
+    });
     return NextResponse.json({ visits });
   } catch (error) {
     return NextResponse.json(
@@ -29,6 +43,17 @@ export async function POST(request) {
   try {
 
     const currentUser = await getCurrentUser();
+
+    if (!currentUser){
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
     
     if (currentUser.role !== "ADMIN" && currentUser.role !== "PENDAFTARAN") {
       return NextResponse.json(

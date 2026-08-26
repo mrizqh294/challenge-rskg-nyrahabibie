@@ -7,6 +7,17 @@ export async function GET(request, { params }) {
   try {
     const currentUser = await getCurrentUser();
 
+    if (!currentUser){
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     if (currentUser.role !== "ADMIN" && currentUser.role !== "PENDAFTARAN") {
       return NextResponse.json(
         {
