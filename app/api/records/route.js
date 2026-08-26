@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import * as z from "zod"; 
-import { prisma} from "./../../../lib/prisma";
-import { getCurrentUser } from "./../../../lib/auth";
+import { prisma} from "../../../lib/prisma";
+import { getCurrentUser } from "../../../lib/auth";
 
 const medicalRecordSchema = z.object({
     visitId: z.number().int().positive(),
