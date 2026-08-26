@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import StatCard from "../../components/StatCard";
@@ -9,6 +9,9 @@ import Badge from "../../components/Badge";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Modal from "../../components/Modal";
+import { getUsers, addUser, updateUser, deleteUser } from "./../../services/user.services";
+import { addVisit, deleteVisit, getVisits, updateVisit } from "./../../services/visit.services";
+import { addPatient, deletePatient, getPatients, updatePatient } from "./../../services/patient.services";
 import { Table, Th, Td, EmptyRow } from "../../components/Table";
 
 const ADMIN_MENUS = [
@@ -34,29 +37,39 @@ export default function DashboardPage() {
   const [modalType, setModalType] = useState("add");
   const [formData, setFormData] = useState({});
 
-  const [users, setUsers] = useState([
-    { id: 1, name: "Admin SIMRS", email: "admin@simrs.com", role: "Admin" },
-    { id: 2, name: "Dr. Budi", email: "budi@simrs.com", role: "Dokter" },
-    { id: 3, name: "Siti", email: "siti@simrs.com", role: "Perawat" },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [patients, setPatients] = useState([]);
+  const [visits, setVisits] = useState([]);
 
-  const [patients, setPatients] = useState([
-    { id: 1, medicalRecord: "RM001", name: "Ahmad Fauzan", gender: "Laki-laki", age: 25 },
-    { id: 2, medicalRecord: "RM002", name: "Siti Aminah", gender: "Perempuan", age: 31 },
-    { id: 3, medicalRecord: "RM003", name: "Budi Santoso", gender: "Laki-laki", age: 42 },
-  ]);
+  const [isLoading, setLoading] = useState(true);
 
-  const [visits, setVisits] = useState([
-    { id: 1, patient: "Ahmad Fauzan", date: "26 Agustus 2026", doctor: "Dr. Budi", status: "Selesai" },
-    { id: 2, patient: "Siti Aminah", date: "26 Agustus 2026", doctor: "Dr. Budi", status: "Menunggu" },
-    { id: 3, patient: "Budi Santoso", date: "25 Agustus 2026", doctor: "Dr. Andi", status: "Selesai" },
-  ]);
+  useEffect(() => {
+    async function loadUsers() {
+      try {
+        const [users, patients, visits] = await Promise.all([
+          getUsers(),
+          getPatients(),
+          getVisits(),
+        ]);
+
+        setUsers(users);
+        setPatients(patients);
+        setVisits(visits);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadUsers();
+  }, []);
 
   const getPageTitle = () => PAGE_TITLES[activeMenu] || "Dashboard";
 
-  // ==========================================
+
   // MODAL HELPERS
-  // ==========================================
+
   const openAddModal = () => {
     setModalType("add");
     setFormData({});
@@ -75,44 +88,91 @@ export default function DashboardPage() {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setFormData((prev) => {
+      let finalValue = value;
+
+      if (name === "age") {
+        finalValue = value === "" ? "" : Number(value);
+      }
+
+      return {
+        ...prev,
+        [name]: finalValue,
+      };
+    });
   };
 
-  // ==========================================
-  // CRUD HELPERS
-  // ==========================================
-  const nextId = (list) => (list.length > 0 ? Math.max(...list.map((item) => item.id)) + 1 : 1);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const upsert = (list, setList) => {
-    if (modalType === "add") {
-      setList([...list, { ...formData, id: nextId(list) }]);
-    } else {
-      setList(list.map((item) => (item.id === formData.id ? formData : item)));
+    try {
+      if (activeMenu === "users") {
+        if (modalType === "add") {
+          await addUser(formData);
+        } else if (modalType === "edit") {
+          await updateUser(formData.id, formData);
+        }
+
+        const data = await getUsers();
+        setUsers(data);
+      }
+
+      if (activeMenu === "patients") {
+        if (modalType === "add") {
+          await addPatient(formData);
+        } else if (modalType === "edit") {
+          await updatePatient(formData.id, formData);
+        }
+
+        const data = await getPatients();
+        setPatients(data);
+      }
+
+      if (activeMenu === "visits") {
+        if (modalType === "add") {
+          await addVisit(formData);
+        } else if (modalType === "edit") {
+          await updateVisit(formData.id, formData);
+        }
+
+        const data = await getVisits();
+        setVisits(data);
+      }
+
+      closeModal();
+    } catch (error) {
+      console.error(error);
+      alert("Gagal menyimpan data");
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (activeMenu === "users") upsert(users, setUsers);
-    if (activeMenu === "patients") upsert(patients, setPatients);
-    if (activeMenu === "visits") upsert(visits, setVisits);
-
-    closeModal();
-  };
-
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Apakah Anda yakin ingin menghapus data ini?");
     if (!confirmDelete) return;
 
-    if (activeMenu === "users") setUsers(users.filter((user) => user.id !== id));
-    if (activeMenu === "patients") setPatients(patients.filter((patient) => patient.id !== id));
-    if (activeMenu === "visits") setVisits(visits.filter((visit) => visit.id !== id));
+    if (activeMenu === "users") {
+      await deleteUser(id);
+      const data = await getUsers();
+      setUsers(data);
+    }
+
+    if (activeMenu === "patients") {
+      await deletePatient(id);
+      const data = await getPatients();
+      setPatients(data);
+    }
+
+    if (activeMenu === "visits") {
+      await deleteVisit(id);
+      const data = await getVisits();
+      setVisits(data);
+    }
   };
 
-  // ==========================================
-  // TABLES
-  // ==========================================
+  // TABLE
   const renderUsersTable = () => (
     <Table>
       <thead>
@@ -165,7 +225,7 @@ export default function DashboardPage() {
           patients.map((patient, index) => (
             <tr key={patient.id} className="border-b hover:bg-gray-50">
               <Td>{index + 1}</Td>
-              <Td>{patient.medicalRecord}</Td>
+              <Td>{patient.recordNumber}</Td>
               <Td>{patient.name}</Td>
               <Td>{patient.gender}</Td>
               <Td>{patient.age} tahun</Td>
@@ -238,11 +298,21 @@ export default function DashboardPage() {
         <>
           <Input label="Nama" name="name" value={formData.name || ""} onChange={handleChange} placeholder="Masukkan nama" />
           <Input label="Email" name="email" type="email" value={formData.email || ""} onChange={handleChange} placeholder="Masukkan email" />
+          {modalType === "add" && (
+            <Input
+              label="Password"
+              name="password"
+              type="password"
+              value={formData.password || ""}
+              onChange={handleChange}
+              placeholder="Masukkan Password"
+            />
+          )}
           <Select label="Role" name="role" value={formData.role || ""} onChange={handleChange}>
             <option value="">Pilih Role</option>
-            <option value="Admin">Admin</option>
-            <option value="Dokter">Dokter</option>
-            <option value="Perawat">Perawat</option>
+            <option value="ADMIN">Admin</option>
+            <option value="DOKTER">Dokter</option>
+            <option value="PENDAFTARAN">Pendaftaran</option>
           </Select>
         </>
       );
@@ -251,12 +321,11 @@ export default function DashboardPage() {
     if (activeMenu === "patients") {
       return (
         <>
-          <Input label="No. Rekam Medis" name="medicalRecord" value={formData.medicalRecord || ""} onChange={handleChange} placeholder="RM004" />
           <Input label="Nama Pasien" name="name" value={formData.name || ""} onChange={handleChange} placeholder="Masukkan nama pasien" />
           <Select label="Jenis Kelamin" name="gender" value={formData.gender || ""} onChange={handleChange}>
             <option value="">Pilih jenis kelamin</option>
-            <option value="Laki-laki">Laki-laki</option>
-            <option value="Perempuan">Perempuan</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
           </Select>
           <Input label="Umur" name="age" type="number" value={formData.age || ""} onChange={handleChange} placeholder="Masukkan umur" />
         </>
@@ -267,7 +336,6 @@ export default function DashboardPage() {
       return (
         <>
           <Input label="Nama Pasien" name="patient" value={formData.patient || ""} onChange={handleChange} placeholder="Nama pasien" />
-          <Input label="Tanggal" name="date" value={formData.date || ""} onChange={handleChange} placeholder="26 Agustus 2026" />
           <Input label="Dokter" name="doctor" value={formData.doctor || ""} onChange={handleChange} placeholder="Nama dokter" />
           <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
             <option value="">Pilih status</option>
@@ -282,9 +350,7 @@ export default function DashboardPage() {
     return null;
   };
 
-  // ==========================================
   // RETURN
-  // ==========================================
   return (
     <div className="min-h-screen bg-gray-100">
       <Sidebar

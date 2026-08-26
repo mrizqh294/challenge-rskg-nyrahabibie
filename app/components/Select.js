@@ -8,7 +8,7 @@ export default function Select({ label, name, value, onChange, children }) {
         value={value}
         onChange={onChange}
         required
-        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none text-gray-700 bg-white transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
       >
         {children}
       </select>

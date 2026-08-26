@@ -1,6 +1,6 @@
 export function Table({ children }) {
   return (
-    <table className="w-full min-w-[700px] text-left text-sm">
+    <table className="w-full min-w-175 text-left text-sm">
       {children}
     </table>
   );

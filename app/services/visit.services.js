@@ -1,11 +1,13 @@
-export const fetchVisits = async () => {
+export const getVisits = async () => {
     const response = await fetch("/api/visits");
 
     if (!response.ok) {
         throw new Error("Gagal mengambil data");
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    return data.visits;
 };
 
 export const addVisit = async (data) => {
@@ -39,7 +41,7 @@ export const getVisitById = async (id) => {
 };
 
 
-export const editVisit = async (id, data) => {
+export const updateVisit = async (id, data) => {
     const response = await fetch(`/api/visits/${id}`, {
         method: "PATCH",
         headers: {

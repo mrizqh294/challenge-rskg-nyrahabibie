@@ -1,11 +1,19 @@
 "use client";
 
+import { logout } from "./../services/auth.services";
+
 export default function Sidebar({ activeMenu, setActiveMenu, sidebarOpen, setSidebarOpen, menuItems }) {
-  const handleLogout = () => {
+  const handleLogout = async() => {
     const confirmLogout = window.confirm("Apakah Anda yakin ingin logout?");
     if (!confirmLogout) return;
+    try {
+        await logout();
+    } catch (error) {
+        console.error(error);
+        alert("Gagal logout");
+    }
 
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   const handleMenuClick = (menuId) => {
