@@ -12,16 +12,15 @@ const visitSchema = z.object({
 export async function GET() {
   try {
     const visits = await prisma.visits.findMany({
-    // Menggunakan 'include' untuk menarik data relasi
       include: {
         patient: {
           select: {
-            name: true, // Hanya mengambil kolom 'name' dari tabel Patient
+            name: true,
           },
         },
         doctor: {
           select: {
-            name: true, // Hanya mengambil kolom 'name' dari tabel Doctor
+            name: true,
           },
         },
       },
