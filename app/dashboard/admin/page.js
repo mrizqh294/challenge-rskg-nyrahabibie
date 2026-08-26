@@ -150,6 +150,7 @@ export default function DashboardPage() {
       }
 
       if (activeMenu === "visits") {
+        console.log(formData)
         if (modalType === "add") {
           await addVisit(formData);
         } else if (modalType === "edit") {
