@@ -17,17 +17,6 @@ export async function GET(request) {
       );
     }
     
-    if (currentUser.role !== "ADMIN") {
-      return NextResponse.json(
-        {
-          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
-        },
-        {
-          status: 403,
-        }
-      );
-    }
-
     const searchParams = request.nextUrl.searchParams;
     const roleParams = searchParams.get('role');
 

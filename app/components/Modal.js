@@ -1,4 +1,4 @@
-export default function Modal({ show, title, onClose, onSubmit, children }) {
+export default function Modal({ show, title, onClose, onSubmit, children, onClick }) {
   if (!show) return null;
 
   return (

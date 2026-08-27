@@ -16,10 +16,10 @@ import { addPatient, deletePatient, getPatients, updatePatient } from "./../../s
 import { Table, Th, Td, EmptyRow } from "../../components/Table";
 
 const ADMIN_MENUS = [
-  { id: "dashboard", label: "Dashboard", icon: "⌂" },
-  { id: "users", label: "Manajemen User", icon: "👤" },
-  { id: "patients", label: "Pasien", icon: "🏥" },
-  { id: "visits", label: "Kunjungan", icon: "📋" },
+  { id: "dashboard", label: "Dashboard" },
+  { id: "users", label: "Manajemen User"},
+  { id: "patients", label: "Pasien"},
+  { id: "visits", label: "Kunjungan" },
 ];
 
 const PAGE_TITLES = {
@@ -408,9 +408,9 @@ export default function DashboardPage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <StatCard title="Total User" value={users.length} icon="👤" />
-                <StatCard title="Total Pasien" value={patients.length} icon="🏥" />
-                <StatCard title="Total Kunjungan" value={visits.length} icon="📋" />
+                <StatCard title="Total User" value={users.length}/>
+                <StatCard title="Total Pasien" value={patients.length}/>
+                <StatCard title="Total Kunjungan" value={visits.length} />
               </div>
             </>
           )}

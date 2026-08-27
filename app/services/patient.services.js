@@ -10,15 +10,31 @@ export const getPatients = async () => {
     return data.patients;
 };
 
+export const addPatientVisit = async (data) => {
+    const response = await fetch("/api/patients/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({})); 
+        throw new Error(errorData.message || "Terjadi kesalahan saat menambah pasien");
+      }
+
+    return await response.json();
+}
+
 export const addPatient = async (data) => {
-    console.log(data);
     const response = await fetch("/api/patients", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
+    });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({})); 

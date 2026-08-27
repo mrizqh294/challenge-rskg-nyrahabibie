@@ -1,4 +1,4 @@
-export default function Input({ label, name, value, onChange, type = "text", placeholder = "" }) {
+export default function Input({ label, name, value, onChange, type = "text", placeholder = "" , readOnly = false, disabled = false, hidden = false}) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
@@ -9,6 +9,9 @@ export default function Input({ label, name, value, onChange, type = "text", pla
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        readOnly={readOnly}
+        disabled={disabled}
+        hidden={hidden}
         required
         className="w-full rounded-lg border text-gray-700 bg-white border-gray-300 px-3 py-2.5 text-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
       />
