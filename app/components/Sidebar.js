@@ -3,6 +3,7 @@
 import { logout } from "./../services/auth.services";
 
 export default function Sidebar({ activeMenu, setActiveMenu, sidebarOpen, setSidebarOpen, menuItems }) {
+  
   const handleLogout = async() => {
     const confirmLogout = window.confirm("Apakah Anda yakin ingin logout?");
     if (!confirmLogout) return;

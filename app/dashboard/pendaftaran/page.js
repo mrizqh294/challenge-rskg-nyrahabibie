@@ -11,8 +11,8 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal";
 import Textarea from "../../components/Textarea";
 import { doctorList } from "./../../services/user.services";
-import { addVisit, deleteVisit, getVisits, updateVisit } from "./../../services/visit.services";
-import { addPatientVisit, deletePatient, getPatients, updatePatient } from "./../../services/patient.services";
+import { addVisit, getVisits, updateVisit } from "./../../services/visit.services";
+import { addPatientVisit, getPatients, updatePatient } from "./../../services/patient.services";
 import { Table, Th, Td, EmptyRow } from "../../components/Table";
 
 const ADMIN_MENUS = [
@@ -24,6 +24,8 @@ const ADMIN_MENUS = [
 const PAGE_TITLES = {
   regist : "Pendaftaran Kunjungan",
   visits: "Data Kunjungan",
+  patientVisit : "Kunjungan",
+  patients : "Data Pasien"
 };
 
 export default function ReceptionistPage() {
@@ -65,7 +67,17 @@ export default function ReceptionistPage() {
     loadUsers();
   }, []);
 
-  const getPageTitle = () => PAGE_TITLES[activeMenu] || "Dashboard";
+  const getPageTitle = (activeMenu, mode) => {
+    if (mode === "nomode") {
+        return PAGE_TITLES[activeMenu];
+    } else if (mode === "editPatient") {
+        return PAGE_TITLES["patients"];
+    } else if (mode === "addVisit") {
+        return PAGE_TITLES["patientVisit"];
+    }
+
+    return "";
+  };
 
 
   // MODAL HELPERS
@@ -77,7 +89,7 @@ export default function ReceptionistPage() {
   };
 
   const openAddVisit = (data) => {
-    setModalType("addVisit");
+    setModalType("add");
     setMode("addVisit")
     setFormData(data);
     setShowModal(true);
@@ -140,11 +152,11 @@ export default function ReceptionistPage() {
 
     try {
       if (activeMenu === "regist") {
-        if (modalType === "add") {
+        if (modalType === "add" && mode === "nomode") {
           await addPatientVisit(formData);
-        } else if (modalType === "addVisit"){
+        } else if (modalType === "add" && mode === "addVisit"){
           await addVisit(formData);
-        } else if (modalType === "edit") {
+        } else if (modalType === "edit" && mode === "editPatient") {
           await updatePatient(formData.id, formData);
         }
 
@@ -170,23 +182,6 @@ export default function ReceptionistPage() {
     } catch (error) {
       console.error(error);
       alert("Gagal menyimpan data");
-    }
-  };
-
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Apakah Anda yakin ingin menghapus data ini?");
-    if (!confirmDelete) return;
-
-    if (activeMenu === "regist") {
-      await deletePatient(id);
-      const data = await getPatients();
-      setPatients(data);
-    }
-
-    if (activeMenu === "visits") {
-      await deleteVisit(id);
-      const data = await getVisits();
-      setVisits(data);
     }
   };
 
@@ -380,16 +375,18 @@ export default function ReceptionistPage() {
             <div>
               <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-800">{getPageTitle()}</h1>
-                  <p className="mt-1 text-sm text-gray-500">Kelola data {getPageTitle().toLowerCase()}.</p>
+                  <h1 className="text-2xl font-bold text-gray-800">{getPageTitle(activeMenu,mode)}</h1>
+                  <p className="mt-1 text-sm text-gray-500">Kelola data {getPageTitle(activeMenu,mode).toLowerCase()}.</p>
                 </div>
 
-                <button
-                  onClick={openAddModal}
-                  className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                  {activeMenu === "regist" ? "+ Pasien Baru" : "+ Tambah Data"}
-                </button>
+                {activeMenu !== "visits" && (
+                    <button
+                        onClick={openAddModal}
+                        className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+                    >
+                        {activeMenu === "regist" ? "+ Pasien Baru" : "+ Tambah Data"}
+                    </button>
+                )}
               </div>
 
               <div className="overflow-hidden rounded-xl bg-white shadow-sm">
@@ -402,7 +399,7 @@ export default function ReceptionistPage() {
 
       <Modal
         show={showModal}
-        title={modalType === "add" ? `Tambah ${getPageTitle()}` : `Edit ${getPageTitle()}`}
+        title={modalType === "add" ? `Tambah ${getPageTitle(activeMenu, mode)}` : `Edit ${getPageTitle(activeMenu, mode)}`}
         onClose={closeModal}
         onSubmit={handleSubmit}
       >

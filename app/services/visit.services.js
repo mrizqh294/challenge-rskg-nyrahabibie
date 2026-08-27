@@ -70,3 +70,13 @@ export const deleteVisit = async (id) => {
 
     return await response.json();
 };
+
+export const getVisitsByDoctor = async() => {
+    const response = await fetch(`/api/visits/doctor`, {
+    method: "GET", 
+  });
+
+  const data = await response.json();
+  
+  return data.visits;
+}

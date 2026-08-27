@@ -19,20 +19,21 @@ const LoginSIMRS = () => {
 
       const data = await response.json();
 
-      const role = data.user.role;
-
-      if (role === "ADMIN") {
-        router.push("/dashboard/admin");
-      } else if (role === "DOKTER") {
-        router.push("/dashboard/dokter");
-      } else if (role === "PENDAFTARAN") {
-        router.push("/dashboard/pendaftaran");
-      } else {
-        alert("Role tidak dikenali");
-      }
-
       if (!response.ok) {
         throw new Error(data.message || "Login gagal");
+      }
+
+      if(data){
+        const role = data.user.role;
+        if (role === "ADMIN") {
+          router.push("/dashboard/admin");
+        } else if (role === "DOKTER") {
+          router.push("/dashboard/dokter");
+        } else if (role === "PENDAFTARAN") {
+          router.push("/dashboard/pendaftaran");
+        } else {
+          alert("Role tidak dikenali");
+        }
       }
     } catch (error) {
       console.error("Login error:", error);

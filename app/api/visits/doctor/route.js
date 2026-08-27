@@ -30,12 +30,28 @@ export async function GET() {
 
     const visits = await prisma.visits.findMany({
       select: {
+        id: true,
+        description: true,
         visitDate: true,
         status: true,
         patient: {
             select: {
-                name: true
+                id: true,
+                name: true,
+                recordNumber: true,
+                age: true,
+                gender : true,
             }
+        },
+        recepsionist: {
+            select: {
+                name: true,
+            }
+        },
+        doctor: {
+          select:{
+            name: true,
+          }
         }
       },
       where: {

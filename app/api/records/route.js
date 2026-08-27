@@ -66,6 +66,7 @@ export async function POST(request) {
     }
 
     const doctorId = currentUser.userId;
+
     const medicalRecord = await prisma.medicalRecord.create({
       data: {
         doctorId,
@@ -73,6 +74,15 @@ export async function POST(request) {
         diagnosis,
         actionPlan,
         receipt,
+      },
+    });
+
+    await prisma.visits.update({
+      where: {
+        id: Number(visitId),
+      },
+      data: {
+        status: "COMPLETED",
       },
     });
 

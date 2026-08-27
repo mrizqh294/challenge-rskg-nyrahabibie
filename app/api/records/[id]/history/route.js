@@ -38,12 +38,12 @@ export async function GET(request, { params }) {
     },
   });
 
-  if (!medicalRecords || medicalRecords.length === 0) {
-    return NextResponse.json(
-      { message: "Tidak ada riwayat medis yang ditemukan" },
-      { status: 404 }
-    );
-  }
+  // if (!medicalRecords || medicalRecords.length === 0) {
+  //   return NextResponse.json(
+  //     { message: "Tidak ada riwayat medis yang ditemukan" },
+  //     { status: 404 }
+  //   );
+  // }
 
   return NextResponse.json(medicalRecords);
 }

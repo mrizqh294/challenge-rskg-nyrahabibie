@@ -16,6 +16,9 @@ export async function GET() {
         patient: {
           select: {
             name: true,
+            recordNumber: true,
+            age: true,
+            gender : true,
           },
         },
         doctor: {
@@ -23,8 +26,14 @@ export async function GET() {
             name: true,
           },
         },
+        recepsionist: {
+          select: {
+            name: true,
+          }
+        }
       },
     });
+    
     return NextResponse.json({ visits });
   } catch (error) {
     return NextResponse.json(
