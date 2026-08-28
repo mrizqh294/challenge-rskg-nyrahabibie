@@ -72,19 +72,9 @@ export default function DoctorPage() {
       let finalValue = value;
       let extraData = {};
 
-      if (name === "age") {
-        finalValue = value === "" ? "" : Number(value);
-      }
-
       if (name === "visitId") {
         const selectedVisit = visits.find((doc) => String(doc.id) === String(value));
         extraData.visitName = selectedVisit ? selectedVisit.name : "";
-        finalValue = value === "" ? "" : Number(value);
-      }
-
-      if (name === "patientId") {
-        const selectedPatient = patients.find((pat) => String(pat.id) === String(value));
-        extraData.patientName = selectedPatient ? selectedPatient.name : "";
         finalValue = value === "" ? "" : Number(value);
       }
 
@@ -150,7 +140,7 @@ export default function DoctorPage() {
                   type={
                     visit.status === "COMPLETED"
                       ? "green"
-                      : visit.status === "CANCEL"
+                      : visit.status === "CANCELED"
                       ? "red"
                       : "yellow"
                   }
@@ -161,7 +151,7 @@ export default function DoctorPage() {
               <Td>
                 <button
                   className={`text-sm font-medium transition ${
-                      visit.status === "COMPLETED"
+                      visit.status === "COMPLETED" || visit.status === "CANCELED"
                       ? "cursor-not-allowed text-gray-400"
                       : "text-blue-600 hover:text-blue-800"
                   }`}
@@ -178,7 +168,7 @@ export default function DoctorPage() {
                       );
                       getRecordHistories(visit.patient?.id)
                   }}
-                  disabled={visit.status === "COMPLETED"}
+                  disabled={visit.status === "COMPLETED" || visit.status === "CANCELED" }
                 >
                   Periksa
                 </button>
@@ -310,7 +300,7 @@ export default function DoctorPage() {
               </span>
             </div>
 
-            <div className="max-h-[300px] space-y-3 overflow-y-auto pr-2">
+            <div className="max-h-75 space-y-3 overflow-y-auto pr-2">
               {recordHistories.map((record) => (
                 <div
                   key={record.id}

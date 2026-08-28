@@ -29,9 +29,7 @@ const PAGE_TITLES = {
 };
 
 export default function DashboardPage() {
-  // ==========================================
   // STATE
-  // ==========================================
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -289,7 +287,7 @@ export default function DashboardPage() {
               <Td>{visit.doctor.name}</Td>
               <Td>{visit.description}</Td>
               <Td>
-                <Badge type={visit.status === "COMPLETED" ? "green" : visit.status === "CANCEL" ? "red" : "yellow"}>
+                <Badge type={visit.status === "COMPLETED" ? "green" : visit.status === "CANCELED" ? "red" : "yellow"}>
                   {visit.status}
                 </Badge>
               </Td>
@@ -316,15 +314,13 @@ export default function DashboardPage() {
     }
   };
 
-  // ==========================================
   // MODAL FORM
-  // ==========================================
   const renderModalForm = () => {
     if (activeMenu === "users") {
       return (
         <>
           <Input label="Nama" name="name" value={formData.name || ""} onChange={handleChange} placeholder="Masukkan nama" />
-          <Input label="Email" name="email" type="email" value={formData.email || ""} onChange={handleChange} placeholder="Masukkan email" />
+          <Input className={modalType === "edit" ? "text-gray-400 bg-gray-100" : ""} label="Email" name="email" type="email" value={formData.email || ""} onChange={handleChange} placeholder="Masukkan email" disabled={modalType === "edit"}/>
           {modalType === "add" && (
             <Input
               label="Password"

@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "./services/auth.services";
-import Alert  from "./components/Alert"
 
 const LoginSIMRS = () => {
   const [email, setEmail] = useState("");

@@ -11,7 +11,7 @@ import Select from "../../components/Select";
 import Modal from "../../components/Modal";
 import Textarea from "../../components/Textarea";
 import { doctorList } from "./../../services/user.services";
-import { addVisit, getVisits, updateVisit } from "./../../services/visit.services";
+import { addVisit, getVisits, getVisitsByRecepsionist, updateVisit } from "./../../services/visit.services";
 import { addPatientVisit, getPatients, updatePatient } from "./../../services/patient.services";
 import { Table, Th, Td, EmptyRow } from "../../components/Table";
 
@@ -29,9 +29,7 @@ const PAGE_TITLES = {
 };
 
 export default function ReceptionistPage() {
-  // ==========================================
   // STATE
-  // ==========================================
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -50,7 +48,7 @@ export default function ReceptionistPage() {
       try {
         const [patients, visits, doctors] = await Promise.all([
           getPatients(),
-          getVisits(),
+          getVisitsByRecepsionist(),
           doctorList(),
         ]);
 
@@ -107,10 +105,6 @@ export default function ReceptionistPage() {
     setMode("nomode");
     setFormData({});
   };
-
-  const resetMode = () => {
-    setMode("nomode");
-  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -230,6 +224,7 @@ export default function ReceptionistPage() {
           <Th>No</Th>
           <Th>Pasien</Th>
           <Th>Dokter</Th>
+          <Th>Pendaftaran</Th>
           <Th>Deskripsi</Th>
           <Th>Status</Th>
         </tr>
@@ -243,9 +238,10 @@ export default function ReceptionistPage() {
               <Td>{index + 1}</Td>
               <Td>{visit.patient.name}</Td>
               <Td>{visit.doctor.name}</Td>
+              <Td>{visit.recepsionist.name}</Td>
               <Td>{visit.description}</Td>
               <Td>
-                <Badge type={visit.status === "COMPLETED" ? "green" : visit.status === "CANCEL" ? "red" : "yellow"}>
+                <Badge type={visit.status === "COMPLETED" ? "green" : visit.status === "CANCELED" ? "red" : "yellow"}>
                   {visit.status}
                 </Badge>
               </Td>
@@ -267,9 +263,8 @@ export default function ReceptionistPage() {
     }
   };
 
-  // ==========================================
   // MODAL FORM
-  // ==========================================
+
   const renderModalForm = () => {
     
     if (activeMenu === "regist" && mode === "nomode") {

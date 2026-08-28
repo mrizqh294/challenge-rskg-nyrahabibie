@@ -1,10 +1,6 @@
 export const getVisits = async () => {
     const response = await fetch("/api/visits");
 
-    if (!response.ok) {
-        throw new Error("Gagal mengambil data");
-    }
-
     const data = await response.json();
 
     return data.visits;
@@ -19,11 +15,6 @@ export const addVisit = async (data) => {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({})); 
-        throw new Error(errorData.message || "Terjadi kesalahan saat menambah kunjungan");
-      }
-
     return await response.json();
 }
 
@@ -31,11 +22,6 @@ export const getVisitById = async (id) => {
     const response = await fetch(`/api/visits/${id}`, {
         method: "GET", 
     });
-
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Gagal mengambil detail kunjungan");
-    }
 
     return await response.json();
 };
@@ -50,11 +36,6 @@ export const updateVisit = async (id, data) => {
         body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Gagal memperbarui data kunjungan");
-    }
-
     return await response.json();
 };
 
@@ -63,20 +44,26 @@ export const deleteVisit = async (id) => {
         method: "DELETE",
     });
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Gagal menghapus data kunjungan");
-    }
-
     return await response.json();
 };
 
 export const getVisitsByDoctor = async() => {
     const response = await fetch(`/api/visits/doctor`, {
-    method: "GET", 
-  });
+        method: "GET", 
+    });
 
-  const data = await response.json();
-  
-  return data.visits;
+    const data = await response.json();
+    
+    return data.visits;
 }
+
+export const getVisitsByRecepsionist = async() => {
+    const response = await fetch(`/api/visits/recepsionist`, {
+        method: "GET", 
+    });
+
+    const data = await response.json();
+    
+    return data.visits;
+}
+
