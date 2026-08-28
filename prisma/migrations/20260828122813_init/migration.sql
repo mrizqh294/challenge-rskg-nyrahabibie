@@ -56,7 +56,7 @@ CREATE TABLE `medicalRecord` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Visits` ADD CONSTRAINT `Visits_patientId_fkey` FOREIGN KEY (`patientId`) REFERENCES `Patients`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Visits` ADD CONSTRAINT `Visits_patientId_fkey` FOREIGN KEY (`patientId`) REFERENCES `Patients`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Visits` ADD CONSTRAINT `Visits_doctorId_fkey` FOREIGN KEY (`doctorId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -68,4 +68,4 @@ ALTER TABLE `Visits` ADD CONSTRAINT `Visits_recepsionistId_fkey` FOREIGN KEY (`r
 ALTER TABLE `medicalRecord` ADD CONSTRAINT `medicalRecord_doctorId_fkey` FOREIGN KEY (`doctorId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `medicalRecord` ADD CONSTRAINT `medicalRecord_visitId_fkey` FOREIGN KEY (`visitId`) REFERENCES `Visits`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `medicalRecord` ADD CONSTRAINT `medicalRecord_visitId_fkey` FOREIGN KEY (`visitId`) REFERENCES `Visits`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

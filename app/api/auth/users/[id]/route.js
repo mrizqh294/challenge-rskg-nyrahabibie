@@ -137,7 +137,13 @@ export async function PATCH(request, { params }) {
             role,
         },
         });
-        return NextResponse.json({ user });
+        return NextResponse.json({
+          message: "Data user berhasil diubah",
+          user: user,
+        },
+        {
+          status: 201,
+        });
     } catch (error) {
         console.error(error);
         return NextResponse.json(

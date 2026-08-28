@@ -136,7 +136,13 @@ export async function PATCH(request, { params }) {
             gender
         },
         });
-        return NextResponse.json({ patient });
+        return NextResponse.json({
+            message: "Data pasien berhasil diubah",
+            patient: patient ,
+          },
+          {
+            status: 201,
+        });
     } catch (error) {
         return NextResponse.json(
         {

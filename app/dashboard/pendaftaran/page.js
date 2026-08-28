@@ -153,11 +153,14 @@ export default function ReceptionistPage() {
     try {
       if (activeMenu === "regist") {
         if (modalType === "add" && mode === "nomode") {
-          await addPatientVisit(formData);
+          const patientVisit = await addPatientVisit(formData);
+          alert(patientVisit.message);
         } else if (modalType === "add" && mode === "addVisit"){
-          await addVisit(formData);
+          const visit = await addVisit(formData);
+          alert(visit.message);
         } else if (modalType === "edit" && mode === "editPatient") {
-          await updatePatient(formData.id, formData);
+          const patient = await updatePatient(formData.id, formData);
+          alert(patient.message);
         }
 
         const patientData = await getPatients();

@@ -98,8 +98,6 @@ export default function DoctorPage() {
 
   const getRecordHistories = async (id) => {
     const recordHistories = await getRecordsById(id);
-    console.log("recordHistories:", recordHistories);
-    console.log("isArray:", Array.isArray(recordHistories));
     setRecordHistories(recordHistories);
     return recordHistories;
   };
@@ -110,7 +108,8 @@ export default function DoctorPage() {
     try {
       if (activeMenu === "visits") {
         if (modalType === "add") {
-          await addRecord(formData);
+          const record = await addRecord(formData);
+          alert(record.message);
         }
         const visitData = await getVisitsByDoctor();
         setVisits(visitData);
@@ -161,7 +160,11 @@ export default function DoctorPage() {
               </Td>
               <Td>
                 <button
-                  className="text-sm font-medium text-blue-600 transition hover:text-blue-800"
+                  className={`text-sm font-medium transition ${
+                      visit.status === "COMPLETED"
+                      ? "cursor-not-allowed text-gray-400"
+                      : "text-blue-600 hover:text-blue-800"
+                  }`}
                   onClick={() => {
                       openAddModal(
                         {
@@ -175,7 +178,7 @@ export default function DoctorPage() {
                       );
                       getRecordHistories(visit.patient?.id)
                   }}
-
+                  disabled={visit.status === "COMPLETED"}
                 >
                   Periksa
                 </button>

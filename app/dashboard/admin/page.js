@@ -126,12 +126,16 @@ export default function DashboardPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(formData);
+
     try {
       if (activeMenu === "users") {
         if (modalType === "add") {
-          await addUser(formData);
+          const user = await addUser(formData);
+          alert(user.message);
         } else if (modalType === "edit") {
-          await updateUser(formData.id, formData);
+          const user = await updateUser(formData.id, formData);
+          alert(user.message);
         }
 
         const data = await getUsers();
@@ -140,9 +144,11 @@ export default function DashboardPage() {
 
       if (activeMenu === "patients") {
         if (modalType === "add") {
-          await addPatient(formData);
+          const patient = await addPatient(formData);
+          alert(patient.message);
         } else if (modalType === "edit") {
-          await updatePatient(formData.id, formData);
+          const patient = await updatePatient(formData.id, formData);
+          alert(patient.message);
         }
 
         const data = await getPatients();
@@ -152,9 +158,11 @@ export default function DashboardPage() {
       if (activeMenu === "visits") {
         console.log(formData)
         if (modalType === "add") {
-          await addVisit(formData);
+          const visit = await addVisit(formData);
+          alert(visit.message)
         } else if (modalType === "edit") {
-          await updateVisit(formData.id, formData);
+          const visit = await updateVisit(formData.id, formData);
+          alert(visit.message)
         }
 
         const data = await getVisits();
@@ -373,7 +381,7 @@ export default function DashboardPage() {
           <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
             <option value="WAITING">Menunggu</option>
             <option value="COMPLETED">Selesai</option>
-            <option value="CANCEL">Batal</option>
+            <option value="CANCELED">Batal</option>
           </Select>
           <Textarea label="Deskrisi" name="description" value={formData.description || ""} onChange={handleChange}/>
         </>

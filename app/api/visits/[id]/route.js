@@ -101,7 +101,7 @@ export async function PATCH(request, { params }) {
         patientId: z.number(),
         doctorId: z.number(),
         description: z.string(),
-        status: z.enum(["WAITING", "COMPLETED", "CANCEL"]),
+        status: z.enum(["WAITING", "COMPLETED", "CANCELED"]),
     });
 
     try {
@@ -138,7 +138,7 @@ export async function PATCH(request, { params }) {
 
         const { id } = await params;
 
-        const patient = await prisma.visits.update({
+        const visit = await prisma.visits.update({
         where: {
             id: Number(id),
         },
@@ -149,7 +149,15 @@ export async function PATCH(request, { params }) {
             status
         },
         });
-        return NextResponse.json({ patient });
+        return NextResponse.json(
+        {
+            message: "Jadwal kunjungan berhasil diubah",
+            visit: visit,
+          },
+          {
+            status: 201,
+          }
+        );
     } catch (error) {
         return NextResponse.json(
         {

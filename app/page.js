@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { login } from "./services/auth.services";
+import Alert  from "./components/Alert"
 
 const LoginSIMRS = () => {
   const [email, setEmail] = useState("");
@@ -10,20 +12,13 @@ const LoginSIMRS = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const data = await login({email, password});
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login gagal");
-      }
-
-      if(data){
+    if(!data.user){
+      
+      alert(data.message)
+        
+      } else {
         const role = data.user.role;
         if (role === "ADMIN") {
           router.push("/dashboard/admin");
@@ -35,10 +30,6 @@ const LoginSIMRS = () => {
           alert("Role tidak dikenali");
         }
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert(error.message);
-    }
   };
 
   return (
