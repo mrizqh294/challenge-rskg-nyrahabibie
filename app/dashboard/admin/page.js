@@ -281,7 +281,7 @@ export default function DashboardPage() {
               <Td>{visit.doctor.name}</Td>
               <Td>{visit.description}</Td>
               <Td>
-                <Badge type={visit.status === "Selesai" ? "green" : visit.status === "Batal" ? "red" : "yellow"}>
+                <Badge type={visit.status === "COMPLETED" ? "green" : visit.status === "CANCEL" ? "red" : "yellow"}>
                   {visit.status}
                 </Badge>
               </Td>

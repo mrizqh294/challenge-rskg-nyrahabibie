@@ -149,9 +149,9 @@ export default function DoctorPage() {
               <Td>
                 <Badge
                   type={
-                    visit.status === "Selesai"
+                    visit.status === "COMPLETED"
                       ? "green"
-                      : visit.status === "Batal"
+                      : visit.status === "CANCEL"
                       ? "red"
                       : "yellow"
                   }
