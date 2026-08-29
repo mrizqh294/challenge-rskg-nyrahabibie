@@ -135,7 +135,6 @@ Sesuaikan nilai berikut dengan konfigurasi MySQL pada komputer masing-masing:
 * `DATABASE_PASSWORD`
 * `DATABASE_NAME`
 * `JWT_SECRET`
-
 ---
 
 ## 6. Generate Prisma Client
