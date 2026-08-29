@@ -223,3 +223,12 @@ Kemudian buka:
 ```text
 http://localhost:3000
 ```
+Lalu login dengan email dan password berikut :
+
+```text
+Admin : admin1@gmail.com
+Pendaftaran : pendaftaran1@gmail.com
+Dokter : dokter1@gmail.com
+
+Password : 12345678 (Semua)
+```
