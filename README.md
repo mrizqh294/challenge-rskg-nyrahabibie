@@ -136,8 +136,6 @@ Sesuaikan nilai berikut dengan konfigurasi MySQL pada komputer masing-masing:
 * `DATABASE_NAME`
 * `JWT_SECRET`
 
-> **Catatan:** Jangan membagikan file `.env` ke repository public karena dapat berisi informasi sensitif seperti password database dan JWT secret.
-
 ---
 
 ## 6. Generate Prisma Client

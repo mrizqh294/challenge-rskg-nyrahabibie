@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Simple SIMRS",
+  title: "SIMRS by MRH",
   description: "Simple SIMRS",
 };
 
