@@ -18,6 +18,7 @@ export async function GET(request) {
     }
     
     const searchParams = request.nextUrl.searchParams;
+    
     const roleParams = searchParams.get('role');
 
     if (roleParams){

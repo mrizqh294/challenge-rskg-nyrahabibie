@@ -186,8 +186,10 @@ export default function DashboardPage() {
 
     if (activeMenu === "patients") {
       await deletePatient(id);
-      const data = await getPatients();
-      setPatients(data);
+      const patient = await getPatients();
+      const visit = await getVisits();
+      setVisits(visit);
+      setPatients(patient);
     }
 
     if (activeMenu === "visits") {

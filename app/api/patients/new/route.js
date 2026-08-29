@@ -33,7 +33,7 @@ export async function POST(request) {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
         },
         {
-          status: 403,
+          status: 401,
         }
       );
     }

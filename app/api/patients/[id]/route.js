@@ -24,7 +24,7 @@ export async function GET(request, { params }) {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
         },
         {
-          status: 403,
+          status: 401,
         }
       );
     }
@@ -54,13 +54,24 @@ export async function DELETE(request, { params }) {
   try {
     const currentUser = await getCurrentUser(); 
 
-    if (currentUser.role !== "ADMIN") {
+    if (!currentUser){
       return NextResponse.json(
         {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
         },
         {
           status: 403,
+        }
+      );
+    }
+
+    if (currentUser.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 401,
         }
       );
     }
@@ -94,6 +105,17 @@ export async function PATCH(request, { params }) {
 
     try {
         const currentUser = await getCurrentUser();
+        if (!currentUser){
+
+        return NextResponse.json(
+            {
+              message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+            },
+            {
+              status: 403,
+            }
+          );
+        }
 
         if (currentUser.role !== "ADMIN" && currentUser.role !== "PENDAFTARAN") {
             return NextResponse.json(
@@ -101,7 +123,7 @@ export async function PATCH(request, { params }) {
                 message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
                 },
                 {
-                status: 403,
+                status: 401,
                 }
             );
         }

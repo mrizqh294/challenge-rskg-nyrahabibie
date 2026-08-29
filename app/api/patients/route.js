@@ -30,7 +30,7 @@ export async function GET() {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
         },
         {
-          status: 403,
+          status: 401,
         }
       );
     }
@@ -53,13 +53,24 @@ export async function POST(request) {
   try {
     const currentUser = await getCurrentUser();
 
-    if (currentUser.role !== "PENDAFTARAN" && currentUser.role !== "ADMIN") {
+    if (!currentUser){
       return NextResponse.json(
         {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
         },
         {
           status: 403,
+        }
+      );
+    }
+
+    if (currentUser.role !== "PENDAFTARAN" && currentUser.role !== "ADMIN") {
+      return NextResponse.json(
+        {
+          message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
+        },
+        {
+          status: 401,
         }
       );
     }

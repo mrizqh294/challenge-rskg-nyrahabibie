@@ -23,7 +23,7 @@ export async function GET() {
           message: "Anda tidak memiliki izin untuk melakukan tindakan ini",
         },
         {
-          status: 403,
+          status: 401,
         }
       );
     }
