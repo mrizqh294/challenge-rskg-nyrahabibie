@@ -376,11 +376,13 @@ export default function DashboardPage() {
               </option>
             ))}
           </Select>
-          <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
-            <option value="WAITING">Menunggu</option>
-            <option value="COMPLETED">Selesai</option>
-            <option value="CANCELED">Batal</option>
-          </Select>
+          {modalType === "edit" && (
+            <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
+              <option value="WAITING">Menunggu</option>
+              <option value="COMPLETED">Selesai</option>
+              <option value="CANCELED">Batal</option>
+            </Select>
+          )}
           <Textarea label="Deskrisi" name="description" value={formData.description || ""} onChange={handleChange}/>
         </>
       );

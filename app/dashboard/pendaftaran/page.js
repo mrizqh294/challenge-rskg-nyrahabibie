@@ -285,11 +285,6 @@ export default function ReceptionistPage() {
               </option>
             ))}
           </Select>
-          <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
-            <option value="WAITING">Menunggu</option>
-            <option value="COMPLETED">Selesai</option>
-            <option value="CANCEL">Batal</option>
-          </Select>
           <Textarea label="Deskripsi" name="description" value={formData.description || ""} onChange={handleChange}/>
         </>
       );
@@ -324,11 +319,6 @@ export default function ReceptionistPage() {
                 {doctor.name}
               </option>
             ))}
-          </Select>
-          <Select label="Status" name="status" value={formData.status || ""} onChange={handleChange}>
-            <option value="WAITING">Menunggu</option>
-            <option value="COMPLETED">Selesai</option>
-            <option value="CANCEL">Batal</option>
           </Select>
           <Textarea label="Deskrisi" name="description" value={formData.description || ""} onChange={handleChange}/>
         </>
